@@ -1,0 +1,31 @@
+{
+  "$schema": "https://claude.ai/schemas/claude-plugin-marketplace.json",
+  "name": "td-mcp",
+  "display_name": "td-mcp (TouchDesigner MCP)",
+  "description": "TouchDesigner MCP server with node CRUD, Python execution, viewport capture, GLSL authoring, scene scaffolding, and recursive cook control. Fork of 8beeeaaat/touchdesigner-mcp.",
+  "version": "1.4.6",
+  "author": {
+    "name": "Dazai (Tatsan) Chen",
+    "url": "https://github.com/DazaiStudio"
+  },
+  "homepage": "https://github.com/DazaiStudio/td-mcp",
+  "license": "MIT",
+  "plugins": [
+    {
+      "name": "td-mcp",
+      "description": "TouchDesigner MCP server — drives TouchDesigner projects from Claude Code with 21 tools covering node CRUD, Python execution, viewport capture, GLSL authoring, scene scaffolding, and recursive cook control.",
+      "mcp_servers": {
+        "td-mcp": {
+          "command": "npx",
+          "args": ["-y", "td-mcp@latest", "--stdio"]
+        }
+      },
+      "skills": [
+        {
+          "name": "td-guide",
+          "path": "skills/td-guide"
+        }
+      ]
+    }
+  ]
+}

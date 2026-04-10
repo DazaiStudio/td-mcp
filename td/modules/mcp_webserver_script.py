@@ -78,7 +78,19 @@ class ControllerManager:
 		from mcp.controllers.api_controller import api_controller_openapi
 
 		self.module_factory = module_factory
-		self.controller = api_controller_openapi
+
+		# td-mcp fork: wrap the upstream controller with ForkController so
+		# that /fork/* routes go through the fork's service layer while
+		# every other route continues to hit the OpenAPI-generated handlers
+		# unchanged.
+		try:
+			from mcp.controllers.fork_controller import ForkController
+
+			self.controller = ForkController(api_controller_openapi)
+			print("MCP: ForkController active — /fork/* routes enabled")
+		except Exception as e:
+			print(f"MCP: ForkController failed to load ({e}), falling back")
+			self.controller = api_controller_openapi
 
 	def handle_request(
 		self, webServerDAT: Any, request: dict[str, Any], response: dict[str, Any]
