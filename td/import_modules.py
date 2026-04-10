@@ -32,6 +32,13 @@ def setup():
 
 	mcp.openapi_schema = openapi_schema
 
+	# td-mcp fork: eagerly import tdapi so the helpers are warmed up and
+	# any syntax errors surface at startup rather than on first call.
+	try:
+		import tdapi  # noqa: F401
+	except ImportError as e:
+		print(f"[td-mcp] tdapi helper library failed to import: {e}")
+
 
 def find_openapi_schema_path(modules_path):
 	candidates = [

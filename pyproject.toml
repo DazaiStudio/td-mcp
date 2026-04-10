@@ -3,16 +3,19 @@ requires = ["setuptools>=68"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "touchdesigner-mcp"
-version = "1.4.3"
-description = "TouchDesigner MCP Server - Python modules"
+name = "td-mcp"
+version = "1.4.6"
+description = "TouchDesigner MCP Server - Python modules (fork of 8beeeaaat/touchdesigner-mcp)"
 readme = "README.md"
 requires-python = ">=3.9"
 license = { file = "LICENSE" }
 authors = [
-    { name = "8beeeaaat" },
+    { name = "Dazai (Tatsan) Chen" },
 ]
-keywords = ["touchdesigner", "mcp", "openapi"]
+maintainers = [
+    { name = "Dazai (Tatsan) Chen" },
+]
+keywords = ["touchdesigner", "mcp", "openapi", "claude", "ai"]
 classifiers = [
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3 :: Only",
@@ -24,9 +27,10 @@ dependencies = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/8beeeaaat/touchdesigner-mcp"
-Repository = "https://github.com/8beeeaaat/touchdesigner-mcp"
-Issues = "https://github.com/8beeeaaat/touchdesigner-mcp/issues"
+Homepage = "https://github.com/DazaiStudio/td-mcp"
+Repository = "https://github.com/DazaiStudio/td-mcp"
+Issues = "https://github.com/DazaiStudio/td-mcp/issues"
+Upstream = "https://github.com/8beeeaaat/touchdesigner-mcp"
 
 [tool.ruff]
 # Line length to match Biome's default (80) or customize as needed
@@ -78,7 +82,7 @@ unfixable = []
 [tool.ruff.lint.isort]
 combine-as-imports = true
 force-sort-within-sections = true
-known-first-party = ["mcp", "utils"]
+known-first-party = ["mcp", "tdapi", "utils"]
 
 [tool.ruff.format]
 # Use double quotes for strings (to match Biome's JavaScript formatting)
