@@ -5,6 +5,33 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [td-mcp fork history]
+
+This project was forked from [8beeeaaat/touchdesigner-mcp](https://github.com/8beeeaaat/touchdesigner-mcp) at upstream version **v1.4.6** on **2026-04-10**. All entries below this heading are fork-specific. Upstream history is preserved further down and remains attributable to [@8beeeaaat](https://github.com/8beeeaaat).
+
+### [Unreleased]
+
+#### Added
+
+- Forked from `8beeeaaat/touchdesigner-mcp@v1.4.6`.
+- Rebranded as `td-mcp`: `package.json`, `server.json`, `mcpb/manifest.json`, README, and CLI bin name updated.
+- Upstream `main` is tracked via `upstream` git remote for future syncs.
+
+#### Planned (see `docs/roadmap.md` — landing in Phase 2)
+
+- `td_pane` / `td_selection` — editor context tools ported from satoruhiga/claude-touchdesigner.
+- `td_viewport` — TOP / network editor screenshot capture.
+- `td_glsl` — first-class GLSL shader authoring with docked-DAT awareness.
+- `td_scaffold` — scene template scaffolding (render pipeline, feedback loop, instanced particles, audio-reactive).
+- `td_cook` — recursive force-cook to fix the nested baseCOMP cooking bug.
+- `td_layout` / `td_connect` — layout intelligence and first-class node wiring.
+- `op.TDAPI` Python helper library ported from satoruhiga/claude-touchdesigner.
+- `td-guide` skill for Claude Code bundling.
+
+---
+
+## Upstream changelog (inherited from 8beeeaaat/touchdesigner-mcp)
+
 ## [1.4.6] - 2026-04-01
 
 ### Security

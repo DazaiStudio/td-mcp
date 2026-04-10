@@ -1,4 +1,4 @@
-IMAGE_NAME=touchdesigner-mcp-server
+IMAGE_NAME=td-mcp
 CONTAINER_NAME=temp-mcp
 SRC_MODULES_PATH=/app/td/modules
 DEST_MODULES_PATH=td/

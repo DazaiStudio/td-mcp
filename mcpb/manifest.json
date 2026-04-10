@@ -1,17 +1,17 @@
 {
   "manifest_version": "0.3",
-  "name": "touchdesigner-mcp",
+  "name": "td-mcp",
   "version": "1.4.6",
-  "display_name": "TouchDesigner MCP Server",
-  "description": "AI assistant for TouchDesigner - control nodes, execute Python scripts, and create interactive visual content",
-  "long_description": "# TouchDesigner MCP Server\n\nBridge between AI assistants and TouchDesigner for creative coding and visual programming. Features include:\n\n- **Node Operations**: Create, delete, and modify TouchDesigner nodes\n- **Python Execution**: Run Python scripts directly in TouchDesigner environment\n- **Parameter Control**: Update node parameters and connections\n- **Real-time Monitoring**: Get TouchDesigner server information and node details\n- **Creative Assistance**: AI-powered workflow optimization and debugging\n- **Code Execution Manifest**: Generate filesystem-style tool manifests (`describe_td_tools`) for code-mode agents\n\nPerfect for visual artists, creative coders, and interactive media developers who want to leverage AI for TouchDesigner projects.",
+  "display_name": "td-mcp (TouchDesigner MCP)",
+  "description": "AI assistant for TouchDesigner — node CRUD, Python execution, viewport capture, GLSL authoring, and scene scaffolding",
+  "long_description": "# td-mcp\n\nA TouchDesigner MCP server that bridges AI assistants with TouchDesigner for creative coding and visual programming. Forked from [8beeeaaat/touchdesigner-mcp](https://github.com/8beeeaaat/touchdesigner-mcp) with an extended tool surface.\n\nFeatures include:\n\n- **Node Operations**: Create, delete, and modify TouchDesigner nodes\n- **Python Execution**: Run Python scripts directly in TouchDesigner environment\n- **Parameter Control**: Update node parameters and connections\n- **Real-time Monitoring**: Get TouchDesigner server information and node details\n- **Code Execution Manifest**: Generate filesystem-style tool manifests (`describe_td_tools`) for code-mode agents\n\nPlanned additions in this fork:\n\n- **Viewport Capture**: Let the agent see what it just built (TOP viewers, network editor panes)\n- **GLSL Authoring**: First-class GLSL shader editing with docked-DAT awareness\n- **Scene Scaffolding**: One-shot templates for render pipelines, feedback loops, instanced particles, audio-reactive setups\n- **Recursive Cook Control**: Fix nested baseCOMP cooking issues\n- **Layout Intelligence**: Find-empty-area and overlap-aware node placement exposed as MCP tools\n- **op.TDAPI Python Helper Library**: Ported from satoruhiga/claude-touchdesigner\n\nPerfect for visual artists, creative coders, and interactive media developers who want to leverage AI for TouchDesigner projects.",
   "author": {
-    "name": "8beeeaaat",
-    "url": "https://github.com/8beeeaaat/touchdesigner-mcp"
+    "name": "Dazai (Tatsan) Chen",
+    "url": "https://github.com/DazaiStudio/td-mcp"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/8beeeaaat/touchdesigner-mcp"
+    "url": "https://github.com/DazaiStudio/td-mcp"
   },
   "server": {
     "type": "node",
@@ -20,7 +20,7 @@
       "command": "npx",
       "args": [
         "-y",
-        "touchdesigner-mcp-server@latest",
+        "td-mcp@latest",
         "--stdio",
         "--port=${user_config.TD_WEB_SERVER_PORT}"
       ]
@@ -126,5 +126,5 @@
     "interactive-media"
   ],
   "license": "MIT",
-  "homepage": "https://github.com/8beeeaaat/touchdesigner-mcp"
+  "homepage": "https://github.com/DazaiStudio/td-mcp"
 }

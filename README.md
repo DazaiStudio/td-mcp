@@ -1,124 +1,107 @@
-# TouchDesigner MCP
+# td-mcp
 
-[![Version](https://img.shields.io/npm/v/touchdesigner-mcp-server?style=flat&colorA=000000&colorB=000000)](https://www.npmjs.com/package/touchdesigner-mcp-server)
-[![Downloads](https://img.shields.io/npm/dt/touchdesigner-mcp-server.svg?style=flat&colorA=000000&colorB=000000)](https://www.npmjs.com/package/touchdesigner-mcp-server)
+> **TouchDesigner MCP server** with node CRUD, Python execution, and an extended tool surface for **viewport capture**, **GLSL authoring**, **scene scaffolding**, and **layout intelligence** — built for Claude Code, Claude Desktop, Cursor, and any stdio-compatible MCP client.
 
-This is an implementation of an MCP (Model Context Protocol) server for TouchDesigner. Its goal is to enable AI agents to control and operate TouchDesigner projects.
+[![Version](https://img.shields.io/npm/v/td-mcp?style=flat&colorA=000000&colorB=000000)](https://www.npmjs.com/package/td-mcp)
+[![License](https://img.shields.io/github/license/DazaiStudio/td-mcp?style=flat&colorA=000000&colorB=000000)](LICENSE)
+[![Upstream](https://img.shields.io/badge/forked_from-8beeeaaat%2Ftouchdesigner--mcp-000000?style=flat)](https://github.com/8beeeaaat/touchdesigner-mcp)
 
-[English](README.md) / [日本語](README.ja.md)
+---
 
-## Overview
+## About
 
-[![demo clip](https://github.com/8beeeaaat/touchdesigner-mcp/blob/main/assets/particle_on_youtube.png)](https://youtu.be/V2znaqGU7f4?si=6HDFbcBHCFPdttkM&t=635)
+`td-mcp` is a [Model Context Protocol](https://modelcontextprotocol.io/) server that gives AI agents first-class control of a running TouchDesigner project. It speaks stdio and Streamable HTTP, ships as an npm package, a Claude Desktop `.mcpb` bundle, and a Claude Code plugin, and includes a TouchDesigner-side `.tox` that exposes a JSON/HTTP API via a WebServer DAT.
 
-TouchDesigner MCP acts as a bridge between AI models and the TouchDesigner WebServer DAT, enabling AI agents to:
+This project is a **fork of [8beeeaaat/touchdesigner-mcp](https://github.com/8beeeaaat/touchdesigner-mcp)** — full credit to [@8beeeaaat](https://github.com/8beeeaaat) for the transport layer, context-window discipline, semver handshake, `.mcpb` packaging, and the original tool surface. This fork extends that foundation with tools focused on what MCP agents need most in a visual programming environment: **seeing the network**, **authoring shaders**, **scaffolding scenes**, and **not hallucinating parameter names**.
 
-- Create, modify, and delete nodes
-- Query node properties and project structure
-- Programmatically control TouchDesigner via Python scripts
+Maintained by **Dazai (Tatsan) Chen** — Lighting Technician at NYU Media Commons ([@DazaiStudio](https://github.com/DazaiStudio)).
+
+## Why fork?
+
+| | Upstream | This fork (planned) |
+|---|:-:|:-:|
+| Node CRUD (create / delete / list / params) | ✅ | ✅ (unchanged) |
+| Python script execution | ✅ | ✅ (unchanged) |
+| Error inspection / class/module docs | ✅ | ✅ (unchanged) |
+| stdio + Streamable HTTP transport | ✅ | ✅ (unchanged) |
+| Context-window discipline (`detailLevel` / `responseFormat` / `limit`) | ✅ | ✅ (unchanged) |
+| `.mcpb` bundle / MCP Registry / Docker | ✅ | ✅ (unchanged) |
+| **Editor context** (current pane, selection) | ❌ | 🚧 `td_pane` / `td_selection` |
+| **Viewport capture** (TOP screenshots, network editor image) | ❌ | 🚧 `td_viewport` |
+| **GLSL shader authoring** (docked-DAT aware) | ❌ | 🚧 `td_glsl` |
+| **Scene scaffolding** (render pipelines, feedback, particles, audio-reactive) | ❌ | 🚧 `td_scaffold` |
+| **Recursive cook control** (fixes nested baseCOMP cooking) | ❌ | 🚧 `td_cook` |
+| **Layout intelligence** (find-empty-area, overlap-aware placement) | ❌ | 🚧 `td_layout` |
+| **First-class node wiring** | ❌ | 🚧 `td_connect` |
+| **`op.TDAPI` Python helper library** (ported from satoruhiga/claude-touchdesigner) | ❌ | 🚧 |
+| **`td-guide` skill** ("your prior knowledge is unreliable") | ❌ | 🚧 |
+
+🚧 = planned for the `td-mcp` fork. See [docs/roadmap.md](docs/roadmap.md) for details.
 
 ## Installation
 
-Please refer to the **[Installation Guide](docs/installation.md)**.
+> 📦 **Not yet published to npm.** Rebranding is in progress. For now, see the [upstream installation guide](https://github.com/8beeeaaat/touchdesigner-mcp/blob/main/docs/installation.md) for the base setup. New tools and the `td-mcp` package will be published once Phase 3 of the roadmap is complete.
 
-If you are updating, please refer to the procedure in the **[Latest Release](https://github.com/8beeeaaat/touchdesigner-mcp/releases/latest#for-updates-from-previous-versions)**.
+Once published, the install flow will be:
 
-## MCP Server Features
+```bash
+# For any stdio-compatible MCP client
+npx -y td-mcp@latest --stdio
 
-This server enables AI agents to perform operations in TouchDesigner using the Model Context Protocol (MCP).
+# For Claude Code
+/plugin install DazaiStudio/td-mcp
 
-### Tools
+# For Claude Desktop
+# Download td-mcp.mcpb from releases, double-click to install.
+```
 
-Tools allow AI agents to perform actions in TouchDesigner.
+## MCP Tools (current)
 
-| Tool Name                | Description                                                        |
-| :---------------------- | :----------------------------------------------------------------- |
-| `create_td_node`        | Creates a new node.                                                |
-| `delete_td_node`        | Deletes an existing node.                                          |
-| `exec_node_method`      | Calls a Python method on a node.                                   |
-| `execute_python_script` | Executes an arbitrary Python script in TouchDesigner.              |
-| `get_module_help`       | Gets Python help() documentation for TouchDesigner modules/classes.|
-| `get_td_class_details`  | Gets details of a TouchDesigner Python class or module.            |
-| `get_td_classes`        | Gets a list of TouchDesigner Python classes.                       |
-| `get_td_info`           | Gets information about the TouchDesigner server environment.       |
-| `get_td_node_errors`    | Checks for errors on a specified node and its children. |
-| `get_td_node_parameters`| Gets the parameters of a specific node.                            |
-| `get_td_nodes`          | Gets nodes under a parent path, with optional filtering.           |
-| `update_td_node_parameters` | Updates the parameters of a specific node.                     |
+All of these come directly from upstream. See the table above for the planned additions.
+
+| Tool | Description |
+|---|---|
+| `create_td_node` | Creates a new node |
+| `delete_td_node` | Deletes an existing node |
+| `exec_node_method` | Calls a Python method on a node |
+| `execute_python_script` | Executes arbitrary Python in TouchDesigner |
+| `get_td_info` | Server environment info |
+| `get_td_classes` / `get_td_class_details` / `get_module_help` | TD Python class & module docs |
+| `get_td_nodes` / `get_td_node_parameters` / `get_td_node_errors` | Node introspection |
+| `update_td_node_parameters` | Parameter updates |
+| `describe_td_tools` | Filesystem-style tool manifest for code-mode agents |
 
 ### Prompts
 
-Prompts provide instructions for AI agents to perform specific actions in TouchDesigner.
-
-| Prompt Name         | Description                                                                 |
-| :------------------| :-------------------------------------------------------------------------- |
-| `Search node`      | Fuzzy searches for nodes and retrieves information based on name, family, or type. |
-| `Node connection`  | Provides instructions to connect nodes within TouchDesigner.                |
-| `Check node errors`| Checks for errors on a specified node, and recursively for its children.    |
-
-### Resources
-
-Not implemented.
+| Prompt | Description |
+|---|---|
+| `Search node` | Fuzzy search for nodes by name / family / type |
+| `Node connection` | Guidance for wiring TD nodes |
+| `Check node errors` | Recursive error inspection |
 
 ## Developer Guide
 
-Looking for local setup, client configuration, project structure, or release workflow notes?
-See the **[Developer Guide](docs/development.md)** for all developer-facing documentation.
+See the [Developer Guide](docs/development.md) for local setup, client configuration, project structure, and release workflow notes. That guide is still the upstream document — Dazai-maintained sections will be added as the fork diverges.
 
 ## Troubleshooting
 
-### Troubleshooting version compatibility
+The upstream [Troubleshooting section](https://github.com/8beeeaaat/touchdesigner-mcp/blob/main/README.md#troubleshooting) is authoritative for version compatibility, connection errors, and the `mcp_webserver_base.tox` setup. This README will grow its own troubleshooting section as fork-specific tools land.
 
-The MCP server uses **semantic versioning** for flexible compatibility checks
+## Upstream Sync
 
-| MCP Server | API Server | Minimum compatible API version | Behavior | Status | Notes |
-|------------|------------|----------------|----------|--------|-------|
-| 1.3.x | 1.3.0 | 1.3.0 | ✅ Works normally | Compatible | Recommended baseline configuration |
-| 1.3.x | 1.4.0 | 1.3.0 | ⚠️ Warning shown, continues | Warning | Older MCP MINOR with newer API may lack new features |
-| 1.4.0 | 1.3.x | 1.3.0 | ⚠️ Warning shown, continues | Warning | Newer MCP MINOR may have additional features |
-| 1.3.2 | 1.3.1 | 1.3.2 | ❌ Execution stops | Error | API below minimum compatible version |
-| 2.0.0 | 1.x.x | N/A | ❌ Execution stops | Error | Different MAJOR = breaking changes |
+This fork preserves upstream commit history and periodically merges from `8beeeaaat/touchdesigner-mcp` (tracked as remote `upstream`). To sync:
 
-**Compatibility Rules**:
+```bash
+git fetch upstream
+git merge upstream/main
+```
 
-- ✅ **Compatible**: Same MAJOR version AND API version ≥ 1.3.0 (minimum compatible version)
-- ⚠️ **Warning**: Different MINOR or PATCH versions within the same MAJOR version (shows warning but continues execution)
-- ❌ **Error**: Different MAJOR versions OR API server < 1.3.0 (execution stops immediately, update required)
+## Credits
 
-- **To resolve compatibility errors:**
-  1. Download the latest [touchdesigner-mcp-td.zip](https://github.com/8beeeaaat/touchdesigner-mcp/releases/latest/download/touchdesigner-mcp-td.zip) from the releases page.
-  2. Delete the existing `touchdesigner-mcp-td` folder and replace it with the newly extracted contents.
-  3. Remove the old `mcp_webserver_base` component from your TouchDesigner project and import the `.tox` from the new folder.
-  4. Restart TouchDesigner and the AI agent running the MCP server (e.g., Claude Desktop).
-
-- **For developers:** When developing locally, run `npm run version` after editing `package.json` (or simply use `npm version ...`). This keeps the Python API (`pyproject.toml` + `td/modules/utils/version.py`), MCP bundle manifest, and registry metadata in sync so that the runtime compatibility check succeeds.
-
-For a deeper look at how the MCP server enforces these rules, see [Version Compatibility Verification](docs/architecture.md#version-compatibility-verification).
-
-### Troubleshooting connection errors
-
-- `TouchDesignerClient` caches failed connection checks for **60 seconds**. Subsequent tool calls reuse the cached error to avoid spamming TouchDesigner and automatically retry after the TTL expires.
-- When the MCP server cannot reach TouchDesigner, you now get guided error messages with concrete fixes:
-  - `ECONNREFUSED` / "connect refused": start TouchDesigner, ensure the WebServer DAT from `mcp_webserver_base.tox` is running, and confirm the configured port (default `9981`).
-  - `ETIMEDOUT` / "timeout": TouchDesigner is responding slowly or the network is blocked. Restart TouchDesigner/WebServer DAT or check your network connection.
-  - `ENOTFOUND` / `getaddrinfo`: the host name is invalid. Use `127.0.0.1` unless you explicitly changed it.
-- The structured error text is also logged through `ILogger`, so you can check the MCP logs to understand why a request stopped before hitting TouchDesigner.
-- Once the underlying issue is fixed, simply run the tool again—the client clears the cached error and re-verifies the connection automatically.
-
-## Contributing
-
-We welcome your contributions!
-
-1. Fork the repository.
-2. Create a feature branch (`git checkout -b feature/amazing-feature`).
-3. Make your changes.
-4. Add tests and ensure everything works (`npm test`).
-5. Commit your changes (`git commit -m 'Add some amazing feature'`).
-6. Push to your branch (`git push origin feature/amazing-feature`).
-7. Open a pull request.
-
-Please always include appropriate tests when making implementation changes.
+- **[@8beeeaaat](https://github.com/8beeeaaat)** — original author of `touchdesigner-mcp`. The transport, packaging, tooling, and context-window design decisions in this repo are theirs. This fork stands on their shoulders.
+- **[@satoruhiga](https://github.com/satoruhiga)** — author of `claude-touchdesigner`, whose `op.TDAPI` Python helper library and `td-guide` skill design are the inspiration for the new Python-side helpers in this fork.
+- **Dazai (Tatsan) Chen** — fork maintainer. Lighting Technician at NYU 370 Jay Street Media Commons.
 
 ## License
 
-MIT
+MIT — same as upstream. See [LICENSE](LICENSE).

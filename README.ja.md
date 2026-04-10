@@ -1,9 +1,16 @@
-# TouchDesigner MCP
+# td-mcp
 
-[![Version](https://img.shields.io/npm/v/touchdesigner-mcp-server?style=flat&colorA=000000&colorB=000000)](https://www.npmjs.com/package/touchdesigner-mcp-server)
-[![Downloads](https://img.shields.io/npm/dt/touchdesigner-mcp-server.svg?style=flat&colorA=000000&colorB=000000)](https://www.npmjs.com/package/touchdesigner-mcp-server)
+[![Version](https://img.shields.io/npm/v/td-mcp?style=flat&colorA=000000&colorB=000000)](https://www.npmjs.com/package/td-mcp)
+[![License](https://img.shields.io/github/license/DazaiStudio/td-mcp?style=flat&colorA=000000&colorB=000000)](LICENSE)
+[![Upstream](https://img.shields.io/badge/forked_from-8beeeaaat%2Ftouchdesigner--mcp-000000?style=flat)](https://github.com/8beeeaaat/touchdesigner-mcp)
 
-TouchDesignerのためのMCP(Model Context Protocol) サーバー実装です。AIエージェントがTouchDesignerプロジェクトを制御・操作できるようになることを目指しています。
+TouchDesignerのためのMCP (Model Context Protocol) サーバー。ノード CRUD、Python 実行に加え、ビューポートキャプチャ・GLSL 編集・シーンスキャフォールド・レイアウト補助の拡張ツールセットを搭載予定。Claude Code / Claude Desktop / Cursor などの stdio 対応 MCP クライアント向け。
+
+> **このリポジトリは [8beeeaaat/touchdesigner-mcp](https://github.com/8beeeaaat/touchdesigner-mcp) のフォークです。** トランスポート層・パッケージング・コンテキスト長管理などの設計は原作者 [@8beeeaaat](https://github.com/8beeeaaat) によるものです。フォーク版では視覚プログラミング環境向けの新ツール（ビューポート可視化、シェーダ編集、シーン雛形、パラメータ幻覚防止スキル）を追加していきます。
+>
+> メンテナ: **Dazai (Tatsan) Chen** — NYU Media Commons Lighting Technician ([@DazaiStudio](https://github.com/DazaiStudio))
+>
+> 日本語版 README の全面更新は Phase 2 以降で対応予定です。現時点では英語版 [README.md](README.md) が最新です。
 
 [English](README.md) / [日本語](README.ja.md)
 

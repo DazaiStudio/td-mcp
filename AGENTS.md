@@ -1,5 +1,7 @@
 # Repository Guidelines
 
+> **Fork notice** — this repository is `td-mcp`, forked from [8beeeaaat/touchdesigner-mcp](https://github.com/8beeeaaat/touchdesigner-mcp) at upstream `v1.4.6` (2026-04-10). Most of these guidelines are inherited from upstream and remain authoritative. Fork-specific additions (new tools, the `op.TDAPI` Python helper library, and the `td-guide` skill) will be layered on top without removing upstream functionality.
+
 ## Project Structure
 
 - `src/`: MCP server core (core/, features/tools, prompts, resources, tdClient, server, api definitions, etc.)

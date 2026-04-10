@@ -783,7 +783,7 @@ The TouchDesigner MCP Server supports two transport modes, each optimized for di
      "mcpServers": {
        "touchdesigner": {
          "command": "npx",
-         "args": ["-y", "touchdesigner-mcp-server@latest", "--stdio"]
+         "args": ["-y", "td-mcp@latest", "--stdio"]
        }
      }
    }
@@ -793,7 +793,7 @@ The TouchDesigner MCP Server supports two transport modes, each optimized for di
 
    ```bash
    # Direct MCP server execution
-   npx touchdesigner-mcp-server --stdio
+   npx td-mcp --stdio
 
    # With MCP Inspector for debugging
    npx @modelcontextprotocol/inspector node dist/cli.js --stdio
@@ -808,7 +808,7 @@ The TouchDesigner MCP Server supports two transport modes, each optimized for di
          "command": "docker",
          "args": [
            "compose", "-f", "/path/to/docker-compose.yml",
-           "exec", "-i", "touchdesigner-mcp-server",
+           "exec", "-i", "td-mcp",
            "node", "dist/cli.js", "--stdio",
            "--host=http://host.docker.internal"
          ]
@@ -849,7 +849,7 @@ The TouchDesigner MCP Server supports two transport modes, each optimized for di
 
    ```bash
    # Start HTTP server
-   touchdesigner-mcp-server \
+   td-mcp \
     --mcp-http-port=6280 \
      --mcp-http-host=127.0.0.1 \
      --host=http://127.0.0.1 \
@@ -938,7 +938,7 @@ The TouchDesigner MCP Server supports two transport modes, each optimized for di
       "command": "npx",
       "args": [
         "-y",
-        "touchdesigner-mcp-server@latest",
+        "td-mcp@latest",
         "--stdio",
         "--host=http://127.0.0.1",
         "--port=9981"
@@ -952,8 +952,8 @@ The TouchDesigner MCP Server supports two transport modes, each optimized for di
 
 ```yaml
 services:
-  touchdesigner-mcp-server:
-    image: touchdesigner-mcp-server
+  td-mcp:
+    image: td-mcp
     extra_hosts:
       - "host.docker.internal:host-gateway"
     stdin_open: true
@@ -966,7 +966,7 @@ services:
 ```bash
 docker-compose up -d
 # Connect via docker compose exec
-docker compose exec -i touchdesigner-mcp-server \
+docker compose exec -i td-mcp \
   node dist/cli.js --stdio --host=http://host.docker.internal
 ```
 
@@ -975,7 +975,7 @@ docker compose exec -i touchdesigner-mcp-server \
 **Direct Execution**:
 
 ```bash
-touchdesigner-mcp-server \
+td-mcp \
   --mcp-http-port=6280 \
   --mcp-http-host=127.0.0.1 \
   --host=http://127.0.0.1 \
@@ -997,7 +997,7 @@ TD_PORT=9981
 
 ```yaml
 services:
-  touchdesigner-mcp-server:
+  td-mcp:
     build: .
     extra_hosts:
       - "host.docker.internal:host-gateway"
@@ -1029,11 +1029,11 @@ services:
       - mcp-server-2
 
   mcp-server-1:
-    image: touchdesigner-mcp-server
+    image: td-mcp
     command: ["node", "dist/cli.js", "--mcp-http-port=6280"]
 
   mcp-server-2:
-    image: touchdesigner-mcp-server
+    image: td-mcp
     command: ["node", "dist/cli.js", "--mcp-http-port=6280"]
 ```
 
@@ -1060,13 +1060,13 @@ Both modes support these TouchDesigner connection options:
 **Before** (Stdio):
 
 ```bash
-npx touchdesigner-mcp-server --stdio
+npx td-mcp --stdio
 ```
 
 **After** (HTTP):
 
 ```bash
-npx touchdesigner-mcp-server \
+npx td-mcp \
   --mcp-http-port=6280 \
   --mcp-http-host=127.0.0.1
 ```
@@ -1076,7 +1076,7 @@ npx touchdesigner-mcp-server \
 ```javascript
 // Before: Stdio (via child_process)
 const { spawn } = require('child_process');
-const server = spawn('npx', ['touchdesigner-mcp-server', '--stdio']);
+const server = spawn('npx', ['td-mcp', '--stdio']);
 
 // After: HTTP (via fetch/EventSource)
 const response = await fetch('http://localhost:6280/mcp', {
@@ -1091,13 +1091,13 @@ const response = await fetch('http://localhost:6280/mcp', {
 **Before** (HTTP):
 
 ```bash
-touchdesigner-mcp-server --mcp-http-port=6280
+td-mcp --mcp-http-port=6280
 ```
 
 **After** (Stdio):
 
 ```bash
-touchdesigner-mcp-server --stdio
+td-mcp --stdio
 ```
 
 **Note**: Session management features (TTL, health checks, concurrent sessions) are not available in Stdio mode.

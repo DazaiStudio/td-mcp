@@ -1,9 +1,9 @@
 services:
-  touchdesigner-mcp-server:
+  td-mcp:
     build:
       context: .
       dockerfile: Dockerfile
-    image: touchdesigner-mcp-server
+    image: td-mcp
     extra_hosts:
       - "host.docker.internal:host-gateway"
     ports:

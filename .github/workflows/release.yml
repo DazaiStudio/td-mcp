@@ -33,11 +33,11 @@ jobs:
           compose-file: "./docker-compose.yml"
           down-flags: "--volumes"
           services: |
-            touchdesigner-mcp-server
+            td-mcp
       - name: Extract build artifacts and create package
         run: |
           # Create a temporary container to extract build artifacts
-          docker create --name temp-mcp touchdesigner-mcp-server
+          docker create --name temp-mcp td-mcp
           docker cp temp-mcp:/app/td/modules td/
           docker cp temp-mcp:/app/dist ./
           docker rm temp-mcp
@@ -48,7 +48,7 @@ jobs:
           cp td/import_modules.py temp_td/
           cp td/mcp_webserver_base.tox temp_td/
           cp -r td/modules temp_td/
-          cd temp_td && zip -r ../touchdesigner-mcp-td.zip .
+          cd temp_td && zip -r ../td-mcp-td.zip .
           rm -rf temp_td
           echo "Build artifacts extracted and package created!"
       - name: Build MCPB package
@@ -86,8 +86,8 @@ jobs:
           name: ${{ steps.projectinfo.outputs.name }} - ${{ steps.projectinfo.outputs.version }} Release
           body: |
             ## Downloads
-            - **TouchDesigner Components**: [touchdesigner-mcp-td.zip](https://github.com/${{ github.repository }}/releases/download/v${{ steps.projectinfo.outputs.version }}/touchdesigner-mcp-td.zip)
-            - **MCP Bundle (.mcpb)**: [touchdesigner-mcp.mcpb](https://github.com/${{ github.repository }}/releases/download/v${{ steps.projectinfo.outputs.version }}/touchdesigner-mcp.mcpb)
+            - **TouchDesigner Components**: [td-mcp-td.zip](https://github.com/${{ github.repository }}/releases/download/v${{ steps.projectinfo.outputs.version }}/td-mcp-td.zip)
+            - **MCP Bundle (.mcpb)**: [td-mcp.mcpb](https://github.com/${{ github.repository }}/releases/download/v${{ steps.projectinfo.outputs.version }}/td-mcp.mcpb)
 
             ## Installation
 
@@ -118,8 +118,8 @@ jobs:
             ## Changes
             See [CHANGELOG.md](https://github.com/${{ github.repository }}/blob/main/CHANGELOG.md) for a detailed history of changes.
           files: |
-            touchdesigner-mcp.mcpb
-            touchdesigner-mcp-td.zip
+            td-mcp.mcpb
+            td-mcp-td.zip
           draft: false
           prerelease: ${{ steps.prerelease.outputs.is_prerelease == 'true' }}
 

@@ -114,7 +114,7 @@ Edit your `claude_desktop_config.json`:
   "mcpServers": {
     "touchdesigner": {
       "command": "npx",
-      "args": ["-y", "touchdesigner-mcp-server@latest", "--stdio"]
+      "args": ["-y", "td-mcp@latest", "--stdio"]
     }
   }
 }
@@ -127,7 +127,7 @@ _Optional:_ Add `--host` / `--port` arguments if TouchDesigner is not running on
 Run the following command:
 
 ```bash
-claude mcp add -s user touchdesigner -- npx -y touchdesigner-mcp-server@latest --stdio
+claude mcp add -s user touchdesigner -- npx -y td-mcp@latest --stdio
 ```
 
 Or manually edit `~/.claude.json`:
@@ -137,7 +137,7 @@ Or manually edit `~/.claude.json`:
   "mcpServers": {
     "touchdesigner": {
       "command": "npx",
-      "args": ["-y", "touchdesigner-mcp-server@latest", "--stdio"],
+      "args": ["-y", "td-mcp@latest", "--stdio"],
     }
   }
 }
@@ -148,7 +148,7 @@ Or manually edit `~/.claude.json`:
 Run the following command:
 
 ```bash
-codex mcp add touchdesigner -- npx -y touchdesigner-mcp-server@latest --stdio
+codex mcp add touchdesigner -- npx -y td-mcp@latest --stdio
 ```
 
 Or manually edit `~/.codex/config.toml`:
@@ -156,7 +156,7 @@ Or manually edit `~/.codex/config.toml`:
 ```toml
 [mcp_servers.touchdesigner]
 command = "npx"
-args = ["-y", "touchdesigner-mcp-server@latest", "--stdio"]
+args = ["-y", "td-mcp@latest", "--stdio"]
 ```
 
 #### For Other MCP Clients
@@ -164,7 +164,7 @@ args = ["-y", "touchdesigner-mcp-server@latest", "--stdio"]
 Any MCP-compatible client can use the NPM package via stdio transport:
 
 - **Command**: `npx`
-- **Args**: `["-y", "touchdesigner-mcp-server@latest", "--stdio"]`
+- **Args**: `["-y", "td-mcp@latest", "--stdio"]`
 - **Optional Args**: `--host=<url>`, `--port=<number>`
 
 Add the optional flags only when TouchDesigner is not running on `http://127.0.0.1:9981`.
@@ -274,7 +274,7 @@ Choose a transport configuration:
            "/path/to/your/touchdesigner-mcp/docker-compose.yml",
            "exec",
            "-i",
-           "touchdesigner-mcp-server",
+           "td-mcp",
            "node",
            "dist/cli.js",
            "--stdio",
@@ -319,7 +319,7 @@ npm run http
 <https://github.com/user-attachments/assets/5447e4da-eb5a-4ebd-bbbe-3ba347d1f6fb>
 
 ```bash
-touchdesigner-mcp-server \
+td-mcp \
   --mcp-http-port=6280 \
   --mcp-http-host=127.0.0.1 \
   --host=http://127.0.0.1 \

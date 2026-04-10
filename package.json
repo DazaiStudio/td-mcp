@@ -1,29 +1,37 @@
 {
-	"name": "touchdesigner-mcp-server",
+	"name": "td-mcp",
 	"version": "1.4.6",
-	"description": "MCP server for TouchDesigner",
+	"description": "TouchDesigner MCP server — node CRUD, Python execution, viewport capture, GLSL authoring, and scene scaffolding for AI agents. Fork of 8beeeaaat/touchdesigner-mcp with extended tool surface.",
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/8beeeaaat/touchdesigner-mcp.git"
+		"url": "git+https://github.com/DazaiStudio/td-mcp.git"
 	},
 	"keywords": [
 		"MCP Server",
-		"TouchDesigner"
+		"Model Context Protocol",
+		"TouchDesigner",
+		"Claude",
+		"AI",
+		"Creative Coding",
+		"Visual Programming"
 	],
-	"author": "8beeeaaat",
+	"author": "Dazai (Tatsan) Chen <DazaiStudio>",
+	"contributors": [
+		"8beeeaaat (upstream maintainer, original author)"
+	],
 	"license": "MIT",
-	"mcpName": "io.github.8beeeaaat/touchdesigner-mcp-server",
+	"mcpName": "io.github.dazaistudio/td-mcp",
 	"mcpCompatibility": {
 		"minApiVersion": "1.3.0"
 	},
 	"bugs": {
-		"url": "https://github.com/8beeeaaat/touchdesigner-mcp/issues"
+		"url": "https://github.com/DazaiStudio/td-mcp/issues"
 	},
-	"homepage": "https://github.com/8beeeaaat/touchdesigner-mcp#readme",
+	"homepage": "https://github.com/DazaiStudio/td-mcp#readme",
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",
 	"bin": {
-		"touchdesigner-mcp-server": "dist/cli.js"
+		"td-mcp": "dist/cli.js"
 	},
 	"dependencies": {
 		"@modelcontextprotocol/sdk": "^1.27.1",
@@ -71,7 +79,7 @@
 		"build": "run-s build:*",
 		"build:gen": "npm run gen",
 		"build:dist": "tsc && shx chmod +x dist/*.js && shx cp -r src/features/tools/presenter/templates dist/features/tools/presenter/",
-		"build:mcpb": "npx @anthropic-ai/mcpb pack mcpb/ touchdesigner-mcp.mcpb",
+		"build:mcpb": "npx @anthropic-ai/mcpb pack mcpb/ td-mcp.mcpb",
 		"lint": "run-p lint:*",
 		"lint:biome": "biome check",
 		"lint:tsc": "tsc --noEmit",
