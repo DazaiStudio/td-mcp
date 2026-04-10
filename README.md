@@ -1,48 +1,57 @@
 # td-mcp
 
-> **TouchDesigner MCP server** with node CRUD, Python execution, and an extended tool surface for **viewport capture**, **GLSL authoring**, **scene scaffolding**, and **layout intelligence** — built for Claude Code, Claude Desktop, Cursor, and any stdio-compatible MCP client.
+**A TouchDesigner MCP server built for agents that need to see the network, not just guess at it.**
 
 [![Version](https://img.shields.io/npm/v/td-mcp?style=flat&colorA=000000&colorB=000000)](https://www.npmjs.com/package/td-mcp)
 [![License](https://img.shields.io/github/license/DazaiStudio/td-mcp?style=flat&colorA=000000&colorB=000000)](LICENSE)
-[![Upstream](https://img.shields.io/badge/forked_from-8beeeaaat%2Ftouchdesigner--mcp-000000?style=flat)](https://github.com/8beeeaaat/touchdesigner-mcp)
+
+`td-mcp` lets Claude, Cursor, Claude Desktop, and any stdio-compatible MCP client drive a running TouchDesigner project — creating and wiring nodes, running Python, **capturing viewport screenshots**, **authoring GLSL shaders**, **scaffolding entire scenes**, and handling the nested-baseCOMP cooking weirdness that trips up every real project.
+
+Built and maintained by **Dazai (Tatsan) Chen** — Lighting Technician at **NYU 370J Media Commons**, where this project drives the live DMX lighting rigs across the Ballrooms, Black Box, and Audio Lab spaces.
 
 ---
 
-## About
+## Why this exists
 
-`td-mcp` is a [Model Context Protocol](https://modelcontextprotocol.io/) server that gives AI agents first-class control of a running TouchDesigner project. It speaks stdio and Streamable HTTP, ships as an npm package, a Claude Desktop `.mcpb` bundle, and a Claude Code plugin, and includes a TouchDesigner-side `.tox` that exposes a JSON/HTTP API via a WebServer DAT.
+I spend my days in TouchDesigner. As AI agents became genuinely useful, I wanted one that could actually collaborate with me in TD — not just stringify some Python and hope it compiles, but *see* what it just built, understand that `radx` and `radius` are different things on different SOPs, and avoid the cook-scope landmines I hit in production.
 
-This project is a **fork of [8beeeaaat/touchdesigner-mcp](https://github.com/8beeeaaat/touchdesigner-mcp)** — full credit to [@8beeeaaat](https://github.com/8beeeaaat) for the transport layer, context-window discipline, semver handshake, `.mcpb` packaging, and the original tool surface. This fork extends that foundation with tools focused on what MCP agents need most in a visual programming environment: **seeing the network**, **authoring shaders**, **scaffolding scenes**, and **not hallucinating parameter names**.
+The existing MCP servers for TouchDesigner get the CRUD surface right but stop there. They can create a `glslTOP`, but they can't read back the viewer to tell whether the shader compiled. They can write a Python script, but they can't verify that a nested base COMP actually cooked after the edit. They treat the agent as a code executor, not a collaborator.
 
-Maintained by **Dazai (Tatsan) Chen** — Lighting Technician at NYU Media Commons ([@DazaiStudio](https://github.com/DazaiStudio)).
+`td-mcp` is my answer. It's designed around two principles:
 
-## Why fork?
+1. **See the network before acting on it.** Every mutation tool is paired with a way to inspect the result — viewport captures, parameter reads, error checks, cook-state introspection.
+2. **Assume the LLM's memory is unreliable.** TD parameter names are notoriously non-obvious. Tools push the agent toward verification (`get_td_node_parameters`, `describe_td_tools`) before setting anything, backed by a skill that says so explicitly.
 
-| | Upstream | This fork (planned) |
-|---|:-:|:-:|
-| Node CRUD (create / delete / list / params) | ✅ | ✅ (unchanged) |
-| Python script execution | ✅ | ✅ (unchanged) |
-| Error inspection / class/module docs | ✅ | ✅ (unchanged) |
-| stdio + Streamable HTTP transport | ✅ | ✅ (unchanged) |
-| Context-window discipline (`detailLevel` / `responseFormat` / `limit`) | ✅ | ✅ (unchanged) |
-| `.mcpb` bundle / MCP Registry / Docker | ✅ | ✅ (unchanged) |
-| **Editor context** (current pane, selection) | ❌ | 🚧 `td_pane` / `td_selection` |
-| **Viewport capture** (TOP screenshots, network editor image) | ❌ | 🚧 `td_viewport` |
-| **GLSL shader authoring** (docked-DAT aware) | ❌ | 🚧 `td_glsl` |
-| **Scene scaffolding** (render pipelines, feedback, particles, audio-reactive) | ❌ | 🚧 `td_scaffold` |
-| **Recursive cook control** (fixes nested baseCOMP cooking) | ❌ | 🚧 `td_cook` |
-| **Layout intelligence** (find-empty-area, overlap-aware placement) | ❌ | 🚧 `td_layout` |
-| **First-class node wiring** | ❌ | 🚧 `td_connect` |
-| **`op.TDAPI` Python helper library** (ported from satoruhiga/claude-touchdesigner) | ❌ | 🚧 |
-| **`td-guide` skill** ("your prior knowledge is unreliable") | ❌ | 🚧 |
+The architecture, transport, and packaging build on [8beeeaaat/touchdesigner-mcp](https://github.com/8beeeaaat/touchdesigner-mcp) (see [Credits](#credits) for the full story); the authoring surface — viewport capture, GLSL editing, scene scaffolding, cook control, layout intelligence, and the Python helper library — is new.
 
-🚧 = planned for the `td-mcp` fork. See [docs/roadmap.md](docs/roadmap.md) for details.
+## Capabilities
+
+### Available today (from the inherited base)
+
+| Area | Tools |
+|---|---|
+| Node CRUD | `create_td_node`, `delete_td_node`, `get_td_nodes`, `get_td_node_parameters`, `update_td_node_parameters` |
+| Python | `execute_python_script`, `exec_node_method` |
+| Introspection | `get_td_info`, `get_td_node_errors`, `get_td_classes`, `get_td_class_details`, `get_module_help` |
+| Meta | `describe_td_tools` (filesystem-style tool manifest for code-mode agents) |
+| Transports | stdio + Streamable HTTP/SSE |
+| Packaging | npm package, Claude Desktop `.mcpb` bundle, Docker image, MCP Registry listing |
+| Discipline | `detailLevel` / `responseFormat` / `limit` on every tool to keep context windows sane |
+
+### Landing next (see [`docs/roadmap.md`](docs/roadmap.md))
+
+- **`td_pane` / `td_selection`** — editor context. Tell the agent where the user is looking and what's already selected.
+- **`td_viewport`** — PNG capture of any TOP, COMP viewer, or the network editor pane. The single highest-ROI addition.
+- **`td_cook`** — recursive force-cook that fixes the nested-baseCOMP staleness bug.
+- **`td_glsl`** — first-class GLSL editing that respects docked `_pixel` / `_vertex` DATs instead of orphaning them.
+- **`td_scaffold`** — one-shot templates for render pipelines, feedback loops, instanced particles, audio-reactive setups, projection mapping.
+- **`td_connect` / `td_layout`** — wiring and layout with overlap-aware placement.
+- **`op.TDAPI` Python helper library** — layout intelligence, docked-op awareness, cook-aware error handling, exposed globally inside TD so `execute_python_script` has them without imports.
+- **`td-guide` skill** — bundled with the Claude Code plugin, with an opening line the agent cannot ignore: *"Your prior knowledge of TouchDesigner parameter names is unreliable. Use `get_td_node_parameters` before setting any parameter."*
 
 ## Installation
 
-> 📦 **Not yet published to npm.** Rebranding is in progress. For now, see the [upstream installation guide](https://github.com/8beeeaaat/touchdesigner-mcp/blob/main/docs/installation.md) for the base setup. New tools and the `td-mcp` package will be published once Phase 3 of the roadmap is complete.
-
-Once published, the install flow will be:
+> 📦 **Not yet published.** The rebrand is in place and Phase 3 implementation is underway. For the inherited base, the upstream [installation guide](https://github.com/8beeeaaat/touchdesigner-mcp/blob/main/docs/installation.md) still works today. Once published to npm, the flow will be:
 
 ```bash
 # For any stdio-compatible MCP client
@@ -52,56 +61,36 @@ npx -y td-mcp@latest --stdio
 /plugin install DazaiStudio/td-mcp
 
 # For Claude Desktop
-# Download td-mcp.mcpb from releases, double-click to install.
+# Download td-mcp.mcpb from releases and double-click to install.
 ```
 
-## MCP Tools (current)
-
-All of these come directly from upstream. See the table above for the planned additions.
-
-| Tool | Description |
-|---|---|
-| `create_td_node` | Creates a new node |
-| `delete_td_node` | Deletes an existing node |
-| `exec_node_method` | Calls a Python method on a node |
-| `execute_python_script` | Executes arbitrary Python in TouchDesigner |
-| `get_td_info` | Server environment info |
-| `get_td_classes` / `get_td_class_details` / `get_module_help` | TD Python class & module docs |
-| `get_td_nodes` / `get_td_node_parameters` / `get_td_node_errors` | Node introspection |
-| `update_td_node_parameters` | Parameter updates |
-| `describe_td_tools` | Filesystem-style tool manifest for code-mode agents |
-
-### Prompts
-
-| Prompt | Description |
-|---|---|
-| `Search node` | Fuzzy search for nodes by name / family / type |
-| `Node connection` | Guidance for wiring TD nodes |
-| `Check node errors` | Recursive error inspection |
+Full per-client setup (Claude Code, Claude Desktop, Cursor, Codex, VS Code MCP, Docker) will live in [`docs/installation.md`](docs/installation.md).
 
 ## Developer Guide
 
-See the [Developer Guide](docs/development.md) for local setup, client configuration, project structure, and release workflow notes. That guide is still the upstream document — Dazai-maintained sections will be added as the fork diverges.
+Local setup, architecture, release workflow, and troubleshooting live in:
 
-## Troubleshooting
+- [`docs/development.md`](docs/development.md)
+- [`docs/architecture.md`](docs/architecture.md)
+- [`docs/roadmap.md`](docs/roadmap.md) — phased delivery plan and per-tool specifications
 
-The upstream [Troubleshooting section](https://github.com/8beeeaaat/touchdesigner-mcp/blob/main/README.md#troubleshooting) is authoritative for version compatibility, connection errors, and the `mcp_webserver_base.tox` setup. This README will grow its own troubleshooting section as fork-specific tools land.
+## Context
 
-## Upstream Sync
-
-This fork preserves upstream commit history and periodically merges from `8beeeaaat/touchdesigner-mcp` (tracked as remote `upstream`). To sync:
-
-```bash
-git fetch upstream
-git merge upstream/main
-```
+This project comes out of real production work at NYU Media Commons. For the companion lighting project that originally motivated `td-mcp` — the TouchDesigner-based DMX control system for the Ballrooms, Black Box, and Audio Lab — see [`DazaiStudio/nyu-mc-touchdesigner-template`](https://github.com/DazaiStudio/nyu-mc-touchdesigner-template).
 
 ## Credits
 
-- **[@8beeeaaat](https://github.com/8beeeaaat)** — original author of `touchdesigner-mcp`. The transport, packaging, tooling, and context-window design decisions in this repo are theirs. This fork stands on their shoulders.
-- **[@satoruhiga](https://github.com/satoruhiga)** — author of `claude-touchdesigner`, whose `op.TDAPI` Python helper library and `td-guide` skill design are the inspiration for the new Python-side helpers in this fork.
-- **Dazai (Tatsan) Chen** — fork maintainer. Lighting Technician at NYU 370 Jay Street Media Commons.
+`td-mcp` is a fork of and builds directly on two excellent open-source projects. Both are credited in code, in documentation, and here:
+
+- **[@8beeeaaat](https://github.com/8beeeaaat)** — author of [`touchdesigner-mcp`](https://github.com/8beeeaaat/touchdesigner-mcp), the base this project inherits from. The transport layer (stdio + Streamable HTTP), `.mcpb` packaging, MCP Registry listing, semver handshake, context-window discipline, and the entire current tool surface are theirs. `td-mcp` takes no credit for that work and exists only to extend it.
+- **[@satoruhiga](https://github.com/satoruhiga)** — author of [`claude-touchdesigner`](https://github.com/satoruhiga/claude-touchdesigner), whose `op.TDAPI` Python helper library and `td-guide` skill design directly inspired (and will be ported, with attribution, into) this project.
+
+Upstream `main` is tracked as the `upstream` git remote and periodically merged.
+
+## Maintainer
+
+**Dazai (Tatsan) Chen** — Lighting Technician, NYU 370J Media Commons. GitHub: [@DazaiStudio](https://github.com/DazaiStudio).
 
 ## License
 
-MIT — same as upstream. See [LICENSE](LICENSE).
+MIT — same as both upstream projects. See [LICENSE](LICENSE).

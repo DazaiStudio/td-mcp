@@ -1,6 +1,8 @@
 # TouchDesigner MCP Server Architecture
 
-This document describes the architecture of the TouchDesigner MCP server.
+> 📘 **td-mcp fork readers:** this file is the inherited upstream architecture doc (8beeeaaat/touchdesigner-mcp) and describes the shared foundation. For the fork-specific architectural additions — viewport capture pipeline, cook-aware mutation flow, GLSL docked-DAT handling, and the `op.TDAPI` helper library — see [`architecture-td-mcp.md`](architecture-td-mcp.md).
+
+This document describes the architecture of the td-mcp server.
 
 ## Table of Contents
 

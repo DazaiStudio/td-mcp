@@ -2,7 +2,6 @@
 
 Installation guide for TouchDesigner MCP across different AI agents and platforms.
 
-[English](installation.md) / [日本語](installation.ja.md)
 
 ## Quick Start
 

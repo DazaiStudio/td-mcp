@@ -91,7 +91,7 @@ jobs:
 
             ## Installation
 
-            For complete installation instructions, see the **[Installation Guide](https://github.com/${{ github.repository }}/blob/main/docs/installation.md)**. _[日本語](https://github.com/${{ github.repository }}/blob/main/docs/installation.ja.md)_
+            For complete installation instructions, see the **[Installation Guide](https://github.com/${{ github.repository }}/blob/main/docs/installation.md)**.
 
             ### Quick Start (Claude Desktop)
             1. Download `TouchDesigner Components` and the `MCP Bundle` from the Downloads section above
@@ -99,7 +99,7 @@ jobs:
             3. Double-click `touchdesigner-mcp.mcpb` to install in Claude Desktop
 
             ### Other AI Agents
-            See the [Installation Guide](https://github.com/${{ github.repository }}/blob/main/docs/installation.md) _[日本語](https://github.com/${{ github.repository }}/blob/main/docs/installation.ja.md)_ for:
+            See the [Installation Guide](https://github.com/${{ github.repository }}/blob/main/docs/installation.md) for:
             - Claude Code
             - Codex
             - Docker deployment
