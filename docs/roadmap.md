@@ -2,7 +2,7 @@
 
 > Living document describing the fork's vision, phased delivery plan, and detailed tool specs. This file is the single source of truth for "what is this fork adding, and why?". Implementation tickets in GitHub Issues link back here.
 
-**Status:** Phase 2 (planning & documentation) — 2026-04-10
+**Status:** Phases 1–3 complete. Phase 4 (publish) is tracked in [#10](https://github.com/DazaiStudio/td-mcp/issues/10). Last updated 2026-04-10.
 
 ---
 
@@ -28,34 +28,48 @@ The fork inherits 8beeeaaat's transport and packaging rigor and adds the *author
 
 Rename package, CLI, Docker image, MCP registry ID, `.mcpb` bundle. Rewrite README, CHANGELOG, and manifest to document the fork relationship. No code logic changed.
 
-### 🚧 Phase 2 — Docs & planning (in progress)
+### ✅ Phase 2 — Docs & planning (complete, 2026-04-10)
 
 - [x] `docs/roadmap.md` — this file
-- [ ] `docs/architecture.md` extension with fork-specific section
-- [ ] GitHub Issues opened for every Phase 3 item
-- [ ] Label taxonomy: `phase-3:tool`, `phase-3:skill`, `phase-3:python`, `phase-4:publish`
+- [x] `docs/architecture-td-mcp.md` — fork architecture companion
+- [x] GitHub Issues opened for every Phase 3 item ([#2](https://github.com/DazaiStudio/td-mcp/issues/2) – [#9](https://github.com/DazaiStudio/td-mcp/issues/9))
+- [x] Portfolio-tone README rewrite, upstream tutorial assets and Japanese translations removed
 
-### 📦 Phase 3 — Implementation
+### ✅ Phase 3 — Implementation (complete, 2026-04-10)
 
-Ordered by dependency and ROI. Each item corresponds to a GitHub Issue and lives under `docs/roadmap.md#<anchor>` below for specification detail.
+All eight items shipped in commits `f6cf8df` and `05f807d`; issues [#2](https://github.com/DazaiStudio/td-mcp/issues/2) – [#9](https://github.com/DazaiStudio/td-mcp/issues/9) closed.
 
-1. **`op.TDAPI` Python helper library** ([#spec](#optdapi-python-helper-library)) — foundational; every other tool can optionally depend on it.
-2. **`td_pane` + `td_selection`** ([#spec](#td_pane--td_selection)) — cheap, high-value context tools. No new Python deps.
-3. **`td_cook` recursive** ([#spec](#td_cook)) — fixes the nested baseCOMP cooking bug that blocks many real projects.
-4. **`td_viewport`** ([#spec](#td_viewport)) — single highest-ROI new tool. Lets the agent see what it built.
-5. **`td_connect` + `td_layout`** ([#spec](#td_connect--td_layout)) — wiring and placement as first-class tools.
-6. **`td_glsl`** ([#spec](#td_glsl)) — GLSL shader authoring with docked-DAT awareness.
-7. **`td_scaffold`** ([#spec](#td_scaffold)) — one-shot scene templates.
-8. **`td-guide` skill** ([#spec](#td-guide-skill)) — forcing the agent to verify parameter names before acting.
+1. [x] **`op.TDAPI` Python helper library** ([#2](https://github.com/DazaiStudio/td-mcp/issues/2)) — `td/modules/tdapi/`
+2. [x] **`td_pane` + `td_selection`** ([#3](https://github.com/DazaiStudio/td-mcp/issues/3))
+3. [x] **`td_cook` recursive** ([#4](https://github.com/DazaiStudio/td-mcp/issues/4))
+4. [x] **`td_viewport`** ([#5](https://github.com/DazaiStudio/td-mcp/issues/5))
+5. [x] **`td_connect` + `td_layout`** ([#6](https://github.com/DazaiStudio/td-mcp/issues/6))
+6. [x] **`td_glsl`** ([#7](https://github.com/DazaiStudio/td-mcp/issues/7))
+7. [x] **`td_scaffold`** ([#8](https://github.com/DazaiStudio/td-mcp/issues/8))
+8. [x] **`td-guide` skill** ([#9](https://github.com/DazaiStudio/td-mcp/issues/9))
 
-### 🚀 Phase 4 — Publishing
+**Build & verification** (commit `fef1c46`):
 
-- [ ] `npm publish td-mcp`
-- [ ] Claude Code plugin: `.claude-plugin/marketplace.json`
-- [ ] `.mcpb` bundle uploaded to GitHub Releases
-- [ ] Submit to `modelcontextprotocol/registry` (the `io.github.dazaistudio/td-mcp` entry)
-- [ ] 60-second demo video (YouTube + linked from README)
-- [ ] Short post to r/TouchDesigner and Derivative Discord `#ai` channel
+- [x] `orval.config.ts` reads OpenAPI from `src/api/index.yml` (no Docker required for `gen:mcp`)
+- [x] Upstream type-name drift fixed (`CreateNodeRequest` → `CreateNodeBody`, `Xxx200ResponseData` → `Xxx200Data`)
+- [x] `npm run build:dist` passes
+- [x] `npm run lint:biome` passes (0 errors)
+- [x] `npm run lint:tsc` passes
+- [x] `ruff check td/` passes
+- [x] 231 unit tests pass
+
+### 🚀 Phase 4 — Publishing (in progress, tracked in [#10](https://github.com/DazaiStudio/td-mcp/issues/10))
+
+Requires the maintainer's environment (TD install, npm account, GitHub PR access to external repos) — cannot be automated.
+
+- [x] `.claude-plugin/marketplace.json` scaffolded for `/plugin marketplace add DazaiStudio/td-mcp`
+- [ ] Update `mcp_webserver_base.tox` inside TouchDesigner to import `fork_controller` (manual edit inside TD, then re-save the `.tox`)
+- [ ] `npm publish td-mcp` under the DazaiStudio account with provenance
+- [ ] Full release build with Docker (`npm run gen:webserver` + `npm run build:mcpb` → `td-mcp.mcpb` asset)
+- [ ] GitHub Release with `td-mcp-td.zip` + `td-mcp.mcpb` attached
+- [ ] Submit to `modelcontextprotocol/registry` as `io.github.dazaistudio/td-mcp`
+- [ ] 60-second demo video (deferred by maintainer)
+- [ ] Launch posts to r/TouchDesigner and Derivative Discord `#ai` channel (deferred by maintainer)
 
 ---
 

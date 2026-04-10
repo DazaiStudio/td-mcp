@@ -9,24 +9,119 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 This project was forked from [8beeeaaat/touchdesigner-mcp](https://github.com/8beeeaaat/touchdesigner-mcp) at upstream version **v1.4.6** on **2026-04-10**. All entries below this heading are fork-specific. Upstream history is preserved further down and remains attributable to [@8beeeaaat](https://github.com/8beeeaaat).
 
-### [Unreleased]
+### [Unreleased] — pending Phase 4 publish
 
-#### Added
+Phases 1–3 are complete in `main`; the next step is a 1.5.0-fork.1 release
+once the TD-side `.tox` is updated and the package is published to npm.
+Tracked in [#10](https://github.com/DazaiStudio/td-mcp/issues/10).
 
-- Forked from `8beeeaaat/touchdesigner-mcp@v1.4.6`.
-- Rebranded as `td-mcp`: `package.json`, `server.json`, `mcpb/manifest.json`, README, and CLI bin name updated.
-- Upstream `main` is tracked via `upstream` git remote for future syncs.
+#### Remaining before publish
 
-#### Planned (see `docs/roadmap.md` — landing in Phase 2)
+- Update `td/mcp_webserver_base.tox` inside TouchDesigner to import
+  `mcp.controllers.fork_controller` (manual `.tox` re-save required).
+- Run full build with Docker (`npm run gen:webserver` + `npm run build:mcpb`).
+- Publish to npm as `td-mcp` under DazaiStudio account with provenance.
+- Build and attach `.mcpb` bundle + `td-mcp-td.zip` to a GitHub Release.
+- Submit to `modelcontextprotocol/registry` as `io.github.dazaistudio/td-mcp`.
 
-- `td_pane` / `td_selection` — editor context tools ported from satoruhiga/claude-touchdesigner.
-- `td_viewport` — TOP / network editor screenshot capture.
-- `td_glsl` — first-class GLSL shader authoring with docked-DAT awareness.
-- `td_scaffold` — scene template scaffolding (render pipeline, feedback loop, instanced particles, audio-reactive).
-- `td_cook` — recursive force-cook to fix the nested baseCOMP cooking bug.
-- `td_layout` / `td_connect` — layout intelligence and first-class node wiring.
-- `op.TDAPI` Python helper library ported from satoruhiga/claude-touchdesigner.
-- `td-guide` skill for Claude Code bundling.
+---
+
+## Fork releases
+
+### [1.4.6-fork.0] — 2026-04-10
+
+Forked from [8beeeaaat/touchdesigner-mcp@v1.4.6](https://github.com/8beeeaaat/touchdesigner-mcp/releases/tag/v1.4.6).
+Not published to npm — this entry documents the state of the fork
+after Phases 1–3. Release tag and npm publish will come under a new
+version string as part of Phase 4.
+
+#### Added (fork)
+
+**Phase 1 — Rebrand** (commit `924d865`)
+
+- Renamed npm package, CLI binary (`td-mcp`), Docker image, MCP registry
+  ID (`io.github.dazaistudio/td-mcp`), and `.mcpb` bundle.
+- Rewrote README, CHANGELOG, AGENTS.md, and manifest with fork framing.
+- Upstream `main` tracked as `upstream` git remote for future syncs.
+
+**Phase 2 — Docs & planning** (commit `86d4050`)
+
+- `docs/roadmap.md` — phased delivery plan with per-tool specs.
+- `docs/architecture-td-mcp.md` — fork architecture (viewport pipeline,
+  cook-aware mutation flow, GLSL docked-DAT handling, `op.TDAPI` library).
+- Rewrote README with portfolio framing and scannable tool tables.
+- Removed unused inherited assets: Japanese translations, upstream
+  planning docs (`plans/`), upstream tutorial screenshots (`assets/`).
+- Opened GitHub issues [#2](https://github.com/DazaiStudio/td-mcp/issues/2) – [#10](https://github.com/DazaiStudio/td-mcp/issues/10) as the Phase 3+4 tracker.
+
+**Phase 3.1 — `op.TDAPI` Python helper library** (commit `f6cf8df`, [#2](https://github.com/DazaiStudio/td-mcp/issues/2))
+
+- Ported with attribution from [satoruhiga/claude-touchdesigner](https://github.com/satoruhiga/claude-touchdesigner) (MIT).
+- `td/modules/tdapi/__init__.py` — 14 module-level helpers: `CreateOp`,
+  `CreateGeometryComp`, `ChainOperators`, `MoveOp`, `GetBounds`,
+  `GetAllBounds`, `CheckOverlap`, `FindEmptyArea`,
+  `FindTypeConversionPosition`, `GetOperatorInfo`, `GetParameterList`,
+  `GetParameterHelp`, `PrintLayout`, `CheckErrors`, plus fork-only
+  `ForceCook` for nested baseCOMP recovery.
+- `td/modules/tdapi/extension.py` — `TDAPIExtension` class wrapper for
+  eventual `op.TDAPI.CreateOp(...)` access via a COMP extension.
+- Eager-imported in `td/import_modules.py` at server startup.
+
+**Phase 3.2 – 3.8 — Fork tool surface** (commit `05f807d`, [#3](https://github.com/DazaiStudio/td-mcp/issues/3) – [#9](https://github.com/DazaiStudio/td-mcp/issues/9))
+
+- `td_pane` — current network editor pane state.
+- `td_selection` — operators currently selected in the active pane.
+- `td_cook` — recursive force-cook; fixes nested baseCOMP staleness.
+- `td_viewport` — PNG/JPG capture of TOP, COMP viewer, or pane.
+- `td_connect` — first-class wiring with family-compatibility validation.
+- `td_layout` — `find_empty_area` / `check_overlap` / `chain` actions.
+- `td_glsl` — docked-DAT-aware shader read/write.
+- `td_scaffold` — 5 scene templates (`render_pipeline`, `feedback_loop`,
+  `instanced_particles`, `audio_reactive`, `projection_mapping`).
+- TypeScript handlers live in `src/features/tools/handlers/forkTools.ts`
+  with inline Zod schemas (no codegen dependency on `src/gen/`).
+- `src/tdClient/forkClient.ts` — axios wrapper for new `/fork/*` routes.
+- Python services in `td/modules/mcp/services/fork_service.py`, routed
+  via `td/modules/mcp/controllers/fork_controller.py` which wraps the
+  upstream OpenAPI router so `/fork/*` is handled first and upstream
+  routes are unchanged.
+- `td/modules/mcp_webserver_script.py` wires `ForkController` as the
+  outer controller, with graceful fallback to the upstream controller.
+
+**Phase 3.8 — `td-guide` Claude Code skill** (commit `05f807d`, [#9](https://github.com/DazaiStudio/td-mcp/issues/9))
+
+- `skills/td-guide/SKILL.md` with the mandatory "Your prior knowledge
+  of TouchDesigner parameter names is unreliable" opening rule.
+- 8 reference files: `basics.md`, `operator-families.md`,
+  `geometry-comp.md`, `rendering.md`, `glsl.md`, `operator-tips.md`,
+  and fork additions `cooking-nested-comps.md` and `scaffolds.md`.
+
+**Phase 4 prep**
+
+- `.claude-plugin/marketplace.json` for `/plugin marketplace add`.
+
+#### Fixed
+
+- `orval.config.ts` now reads OpenAPI spec from `src/api/index.yml`
+  directly so `gen:mcp` works without running the Docker-based
+  `gen:webserver` step first (commit `fef1c46`).
+- Upstream type-name drift after re-running `gen:mcp` on current
+  orval: `CreateNodeRequest` → `CreateNodeBody`,
+  `ExecNodeMethodRequest` → `ExecNodeMethodBody`,
+  `ExecPythonScriptRequest` → `ExecPythonScriptBody`,
+  `UpdateNodeRequest` → `UpdateNodeBody`,
+  `Xxx200ResponseData` → `Xxx200Data` (commit `fef1c46`).
+- Added `.gitattributes` with `* text=auto eol=lf` so Windows
+  contributors don't trigger 86-file Biome CRLF churn.
+
+#### Verified
+
+- `npm run gen:mcp` (no Docker) — pass.
+- `npm run build:dist` — pass.
+- `npm run lint:biome` — pass (0 errors, 1 info).
+- `npm run lint:tsc` — pass.
+- `ruff check td/` — pass.
+- `npm run test:unit` — 231/231 pass.
 
 ---
 
