@@ -101,8 +101,8 @@ export class ForkClient {
 		const baseURL = `${host}:${port}`;
 		this.http = axios.create({
 			baseURL,
-			timeout: 30_000,
 			headers: { "Content-Type": "application/json" },
+			timeout: 30_000,
 		});
 	}
 
@@ -118,18 +118,15 @@ export class ForkClient {
 					? await this.http.get<ForkEnvelope<T>>(path, config)
 					: await this.http.post<ForkEnvelope<T>>(path, body, config);
 			const envelope = response.data;
-			if (envelope && envelope.success) {
-				return { success: true, data: envelope.data };
+			if (envelope?.success) {
+				return { data: envelope.data, success: true };
 			}
 			const msg =
-				envelope && !envelope.success
-					? envelope.error
-					: "unknown fork error";
-			return { success: false, error: new Error(msg) };
+				envelope && !envelope.success ? envelope.error : "unknown fork error";
+			return { error: new Error(msg), success: false };
 		} catch (err) {
-			const msg =
-				err instanceof Error ? err.message : String(err);
-			return { success: false, error: new Error(`fork call failed: ${msg}`) };
+			const msg = err instanceof Error ? err.message : String(err);
+			return { error: new Error(`fork call failed: ${msg}`), success: false };
 		}
 	}
 
@@ -184,32 +181,20 @@ export class ForkClient {
 		startY?: number;
 		margin?: number;
 	}): Promise<ForkResult<ForkLayoutXY>> {
-		return this.call<ForkLayoutXY>(
-			"post",
-			"/fork/layout/find_empty",
-			params,
-		);
+		return this.call<ForkLayoutXY>("post", "/fork/layout/find_empty", params);
 	}
 
 	layoutCheckOverlap(params: {
 		op: string;
 	}): Promise<ForkResult<ForkLayoutOverlap>> {
-		return this.call<ForkLayoutOverlap>(
-			"post",
-			"/fork/layout/overlap",
-			params,
-		);
+		return this.call<ForkLayoutOverlap>("post", "/fork/layout/overlap", params);
 	}
 
 	layoutChain(params: {
 		ops: string[];
 		spacing?: number;
 	}): Promise<ForkResult<ForkLayoutChain>> {
-		return this.call<ForkLayoutChain>(
-			"post",
-			"/fork/layout/chain",
-			params,
-		);
+		return this.call<ForkLayoutChain>("post", "/fork/layout/chain", params);
 	}
 
 	// --- GLSL authoring -----------------------------------------------------

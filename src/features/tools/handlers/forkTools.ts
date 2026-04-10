@@ -36,9 +36,7 @@ const detailLevelSchema = z
 const responseFormatSchema = z
 	.enum(["json", "yaml", "markdown"])
 	.optional()
-	.describe(
-		"Output format wrapping for the tool result. Defaults to JSON.",
-	);
+	.describe("Output format wrapping for the tool result. Defaults to JSON.");
 
 const formattingSchema = z.object({
 	detailLevel: detailLevelSchema,
@@ -54,9 +52,7 @@ const paneSchema = formattingSchema;
 const selectionSchema = formattingSchema;
 
 const cookSchema = formattingSchema.extend({
-	path: z
-		.string()
-		.describe("Op path, or '/' for the whole project."),
+	path: z.string().describe("Op path, or '/' for the whole project."),
 	recurse: z
 		.boolean()
 		.optional()
@@ -65,14 +61,8 @@ const cookSchema = formattingSchema.extend({
 });
 
 const viewportSchema = formattingSchema.extend({
-	target: z
-		.string()
-		.describe(
-			"TOP path, COMP path (looks up viewer TOP), or the literal 'pane' for the current network editor pane.",
-		),
-	width: z.number().int().positive().optional(),
-	height: z.number().int().positive().optional(),
 	format: z.enum(["png", "jpg"]).optional().default("png"),
+	height: z.number().int().positive().optional(),
 	quality: z
 		.number()
 		.int()
@@ -88,12 +78,18 @@ const viewportSchema = formattingSchema.extend({
 		.describe(
 			"'base64' inlines the image; 'path' returns a temp file path. Captures >256KB are always returned as a path.",
 		),
+	target: z
+		.string()
+		.describe(
+			"TOP path, COMP path (looks up viewer TOP), or the literal 'pane' for the current network editor pane.",
+		),
+	width: z.number().int().positive().optional(),
 });
 
 const connectSchema = formattingSchema.extend({
 	from: z.string().describe("Source op path."),
-	to: z.string().describe("Destination op path."),
 	fromOutlet: z.number().int().nonnegative().optional().default(0),
+	to: z.string().describe("Destination op path."),
 	toInlet: z.number().int().nonnegative().optional().default(0),
 });
 
@@ -108,10 +104,7 @@ const layoutSchema = formattingSchema.extend({
 		.optional()
 		.default("/project1")
 		.describe("Container op (find_empty_area)."),
-	width: z.number().int().positive().optional().default(200),
 	height: z.number().int().positive().optional().default(200),
-	startX: z.number().int().optional().default(0),
-	startY: z.number().int().optional().default(0),
 	margin: z.number().int().nonnegative().optional().default(50),
 	op: z.string().optional().describe("Op to overlap-check (check_overlap)."),
 	ops: z
@@ -119,19 +112,19 @@ const layoutSchema = formattingSchema.extend({
 		.optional()
 		.describe("List of op paths to chain (chain)."),
 	spacing: z.number().int().positive().optional().default(200),
+	startX: z.number().int().optional().default(0),
+	startY: z.number().int().optional().default(0),
+	width: z.number().int().positive().optional().default(200),
 });
 
 const glslSchema = formattingSchema.extend({
-	path: z.string().describe("GLSL TOP / MAT / POP path."),
-	stage: z
-		.enum(["pixel", "vertex", "compute"])
-		.describe("Which shader stage to read or write."),
 	code: z
 		.string()
 		.optional()
 		.describe(
 			"If present, writes this code to the docked shader DAT. Omit for a read-only call.",
 		),
+	path: z.string().describe("GLSL TOP / MAT / POP path."),
 	returnCompiled: z
 		.boolean()
 		.optional()
@@ -139,9 +132,23 @@ const glslSchema = formattingSchema.extend({
 		.describe(
 			"When writing, include any compile errors reported by TD after re-cook.",
 		),
+	stage: z
+		.enum(["pixel", "vertex", "compute"])
+		.describe("Which shader stage to read or write."),
 });
 
 const scaffoldSchema = formattingSchema.extend({
+	base: z
+		.string()
+		.optional()
+		.default("/project1")
+		.describe("Container op to scaffold inside."),
+	name: z
+		.string()
+		.optional()
+		.describe(
+			"Optional prefix for created op names (defaults to the template name).",
+		),
 	template: z
 		.enum([
 			"render_pipeline",
@@ -151,15 +158,6 @@ const scaffoldSchema = formattingSchema.extend({
 			"projection_mapping",
 		])
 		.describe("Which scene template to scaffold."),
-	base: z
-		.string()
-		.optional()
-		.default("/project1")
-		.describe("Container op to scaffold inside."),
-	name: z
-		.string()
-		.optional()
-		.describe("Optional prefix for created op names (defaults to the template name)."),
 });
 
 // -----------------------------------------------------------------------------
@@ -188,10 +186,7 @@ function toContent(text: string) {
 // Registration
 // -----------------------------------------------------------------------------
 
-export function registerForkTools(
-	server: McpServer,
-	logger: ILogger,
-): void {
+export function registerForkTools(server: McpServer, logger: ILogger): void {
 	const client = new ForkClient();
 
 	// --- td_pane ----------------------------------------------------------
@@ -199,11 +194,11 @@ export function registerForkTools(
 		FORK_TOOL_NAMES.TD_PANE,
 		"Return the current TouchDesigner network editor pane state (path, pan, zoom, viewport size).",
 		paneSchema.strict().shape,
-		async (params = {}) => {
+		async (params) => {
 			try {
 				const result = await client.getPane();
 				if (!result.success) throw result.error;
-				return toContent(formatResult(result.data, params.responseFormat));
+				return toContent(formatResult(result.data, params?.responseFormat));
 			} catch (error) {
 				return handleToolError(error, logger, FORK_TOOL_NAMES.TD_PANE);
 			}
@@ -215,11 +210,11 @@ export function registerForkTools(
 		FORK_TOOL_NAMES.TD_SELECTION,
 		"Return the operators currently selected in the active network editor pane.",
 		selectionSchema.strict().shape,
-		async (params = {}) => {
+		async (params) => {
 			try {
 				const result = await client.getSelection();
 				if (!result.success) throw result.error;
-				return toContent(formatResult(result.data, params.responseFormat));
+				return toContent(formatResult(result.data, params?.responseFormat));
 			} catch (error) {
 				return handleToolError(error, logger, FORK_TOOL_NAMES.TD_SELECTION);
 			}
@@ -253,12 +248,12 @@ export function registerForkTools(
 		async (params) => {
 			try {
 				const result = await client.captureViewport({
-					target: params.target,
-					width: params.width,
-					height: params.height,
 					format: params.format,
+					height: params.height,
 					quality: params.quality,
 					returnAs: params.returnAs,
+					target: params.target,
+					width: params.width,
 				});
 				if (!result.success) throw result.error;
 				// For base64 encoded images, strip the payload from the
@@ -266,15 +261,15 @@ export function registerForkTools(
 				// The caller should pass returnAs='path' for anything large.
 				const data = result.data;
 				const terse = {
-					format: data.format,
-					width: data.width,
-					height: data.height,
-					encoding: data.encoding,
-					sizeBytes: data.sizeBytes,
 					data:
 						data.encoding === "base64"
 							? `${data.data.slice(0, 80)}…[${data.sizeBytes}B]`
 							: data.data,
+					encoding: data.encoding,
+					format: data.format,
+					height: data.height,
+					sizeBytes: data.sizeBytes,
+					width: data.width,
 				};
 				return toContent(formatResult(terse, params.responseFormat));
 			} catch (error) {
@@ -292,8 +287,8 @@ export function registerForkTools(
 			try {
 				const result = await client.connect({
 					from: params.from,
-					to: params.to,
 					fromOutlet: params.fromOutlet,
+					to: params.to,
 					toInlet: params.toInlet,
 				});
 				if (!result.success) throw result.error;
@@ -314,11 +309,11 @@ export function registerForkTools(
 				if (params.action === "find_empty_area") {
 					const r = await client.layoutFindEmptyArea({
 						base: params.base,
-						width: params.width,
 						height: params.height,
+						margin: params.margin,
 						startX: params.startX,
 						startY: params.startY,
-						margin: params.margin,
+						width: params.width,
 					});
 					if (!r.success) throw r.error;
 					return toContent(formatResult(r.data, params.responseFormat));
@@ -355,10 +350,10 @@ export function registerForkTools(
 			try {
 				const result = params.code
 					? await client.glslWrite({
-							path: params.path,
-							stage: params.stage,
 							code: params.code,
+							path: params.path,
 							returnCompiled: params.returnCompiled,
+							stage: params.stage,
 						})
 					: await client.glslRead({
 							path: params.path,
@@ -380,9 +375,9 @@ export function registerForkTools(
 		async (params) => {
 			try {
 				const result = await client.scaffold({
-					template: params.template,
 					base: params.base,
 					name: params.name,
+					template: params.template,
 				});
 				if (!result.success) throw result.error;
 				return toContent(formatResult(result.data, params.responseFormat));

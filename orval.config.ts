@@ -3,7 +3,7 @@ import { defineConfig } from "orval";
 export default defineConfig({
 	api: {
 		input: {
-			target: "./td/modules/td_server/openapi_server/openapi/openapi.yaml",
+			target: "./src/api/index.yml",
 		},
 		output: {
 			baseUrl: {
@@ -26,7 +26,7 @@ export default defineConfig({
 	},
 	mcpZod: {
 		input: {
-			target: "./td/modules/td_server/openapi_server/openapi/openapi.yaml",
+			target: "./src/api/index.yml",
 		},
 		output: {
 			biome: false,

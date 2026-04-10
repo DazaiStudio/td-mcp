@@ -24,17 +24,17 @@ export const TOOL_NAMES = {
 	GET_TD_NODE_ERRORS: "get_td_node_errors",
 	GET_TD_NODE_PARAMETERS: "get_td_node_parameters",
 	GET_TD_NODES: "get_td_nodes",
-	UPDATE_TD_NODE_PARAMETERS: "update_td_node_parameters",
+	TD_CONNECT: "td_connect",
+	TD_COOK: "td_cook",
+	TD_GLSL: "td_glsl",
+	TD_LAYOUT: "td_layout",
 
 	// ---- td-mcp fork tools (Phase 3.2 – 3.7) ----
 	TD_PANE: "td_pane",
-	TD_SELECTION: "td_selection",
-	TD_COOK: "td_cook",
-	TD_VIEWPORT: "td_viewport",
-	TD_CONNECT: "td_connect",
-	TD_LAYOUT: "td_layout",
-	TD_GLSL: "td_glsl",
 	TD_SCAFFOLD: "td_scaffold",
+	TD_SELECTION: "td_selection",
+	TD_VIEWPORT: "td_viewport",
+	UPDATE_TD_NODE_PARAMETERS: "update_td_node_parameters",
 } as const;
 
 /**
@@ -43,14 +43,14 @@ export const TOOL_NAMES = {
  * to the fork vs. upstream surface.
  */
 export const FORK_TOOL_NAMES = {
-	TD_PANE: TOOL_NAMES.TD_PANE,
-	TD_SELECTION: TOOL_NAMES.TD_SELECTION,
-	TD_COOK: TOOL_NAMES.TD_COOK,
-	TD_VIEWPORT: TOOL_NAMES.TD_VIEWPORT,
 	TD_CONNECT: TOOL_NAMES.TD_CONNECT,
-	TD_LAYOUT: TOOL_NAMES.TD_LAYOUT,
+	TD_COOK: TOOL_NAMES.TD_COOK,
 	TD_GLSL: TOOL_NAMES.TD_GLSL,
+	TD_LAYOUT: TOOL_NAMES.TD_LAYOUT,
+	TD_PANE: TOOL_NAMES.TD_PANE,
 	TD_SCAFFOLD: TOOL_NAMES.TD_SCAFFOLD,
+	TD_SELECTION: TOOL_NAMES.TD_SELECTION,
+	TD_VIEWPORT: TOOL_NAMES.TD_VIEWPORT,
 } as const;
 
 export const REFERENCE_COMMENT = `Check reference resources: ${TD_PYTHON_CLASS_REFERENCE_INDEX_URL}`;
